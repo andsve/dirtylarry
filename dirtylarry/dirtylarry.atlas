@@ -1,0 +1,33 @@
+images {
+  image: "/dirtylarry/dark_ui_export/button_normal.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/button_pressed.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/checkbox_checked_normal.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/checkbox_checked_pressed.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/checkbox_normal.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/checkbox_pressed.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/radio_checked_normal.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/radio_checked_pressed.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/radio_normal.png"
+}
+images {
+  image: "/dirtylarry/dark_ui_export/radio_pressed.png"
+}
+margin: 0
+extrude_borders: 8
+inner_padding: 0

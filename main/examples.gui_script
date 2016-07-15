@@ -1,0 +1,32 @@
+local dirtylarry = require "dirtylarry/dirtylarry"
+
+function init(self)
+    msg.post(".", "acquire_input_focus")
+    self.checkbox_a_value = false
+    self.checkbox_b_value = true
+    self.radio_value = "a"
+end
+
+function on_input(self, action_id, action)
+    self.input_default  = dirtylarry:input("input_default", action_id, action, gui.KEYBOARD_TYPE_DEFAULT, "Default text")
+    self.input_email    = dirtylarry:input("input_email", action_id, action, gui.KEYBOARD_TYPE_EMAIL, "Email")
+    self.input_number   = dirtylarry:input("input_number", action_id, action, gui.KEYBOARD_TYPE_NUMBER_PAD, "Number")
+    self.input_password = dirtylarry:input("input_password", action_id, action, gui.KEYBOARD_TYPE_PASSWORD, "Password")
+    
+    dirtylarry:button("button_print", action_id, action, function ()
+    	print("First: " .. tostring(self.input_default))
+    	print("Email: " .. tostring(self.input_email))
+    	print("Number: " .. tostring(self.input_number))
+    	print("Password: " .. tostring(self.input_password))
+    	print("Checkbox A: " .. tostring(self.checkbox_a_value))
+    	print("Checkbox B: " .. tostring(self.checkbox_b_value))
+    	print("Radio: " .. tostring(self.radio_value))
+    end)
+
+    self.checkbox_a_value = dirtylarry:checkbox("checkbox_a", action_id, action, self.checkbox_a_value)
+    self.checkbox_b_value = dirtylarry:checkbox("checkbox_b", action_id, action, self.checkbox_b_value)
+    
+    self.radio_value = dirtylarry:radio("radio_a", action_id, action, "a", self.radio_value)
+    self.radio_value = dirtylarry:radio("radio_b", action_id, action, "b", self.radio_value)
+    self.radio_value = dirtylarry:radio("radio_c", action_id, action, "c", self.radio_value) 
+end

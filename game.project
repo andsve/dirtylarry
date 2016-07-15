@@ -1,5 +1,5 @@
 [project]
-title = My project
+title = dirtylarry
 version = 0.1
 
 [bootstrap]
@@ -17,4 +17,21 @@ scale = 0.02
 
 [script]
 shared_state = 1
+
+[library]
+include_dirs = dirtylarry
+
+[ios]
+bundle_identifier = se.svenandersson.dirtylarry
+
+[android]
+package = se.svenandersson.dirtylarry
+input_method = HiddenInputField
+
+[osx]
+bundle_identifier = se.svenandersson.dirtylarry
+
+[graphics]
+default_texture_min_filter = nearest
+default_texture_mag_filter = nearest
 
