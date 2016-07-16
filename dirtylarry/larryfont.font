@@ -1,4 +1,4 @@
-font: "/dirtylarry.ttf"
+font: "/builtins/fonts/vera_mo_bd.ttf"
 material: "/builtins/fonts/font-df.material"
 size: 32
 output_format: TYPE_DISTANCE_FIELD

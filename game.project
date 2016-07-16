@@ -1,6 +1,6 @@
 [project]
 title = dirtylarry
-version = 0.1
+version = 2.0
 
 [bootstrap]
 main_collection = /main/main.collectionc
@@ -32,6 +32,6 @@ input_method = HiddenInputField
 bundle_identifier = se.svenandersson.dirtylarry
 
 [graphics]
-default_texture_min_filter = nearest
-default_texture_mag_filter = nearest
+default_texture_min_filter = linear
+default_texture_mag_filter = linear
 

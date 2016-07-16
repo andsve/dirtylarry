@@ -17,19 +17,19 @@ dirtylarry.colors = {
 }
 dirtylarry.utf8_gfind = "([%z\1-\127\194-\244][\128-\191]*)"
 
-function dirtylarry.button(self, node, input_id, input, cb)
+function dirtylarry.button(self, node, action_id, action, cb)
 
 	local node_bg = gui.get_node(node .. "/larrybutton")
 	local node_label = gui.get_node(node .. "/larrylabel")
 
-    local hit = gui.pick_node( node_bg, input.x, input.y )
-	local touch = input_id == dirtylarry.action_id_touch
+    local hit = gui.pick_node( node_bg, action.x, action.y )
+	local touch = action_id == dirtylarry.action_id_touch
     
     local label_p = vmath.vector3(0.0)
     local flipbook = "button_normal"
 
     if (touch and hit) then
-        if (input.released) then
+        if (action.released) then
             cb()
         else
         	label_p.y = -2.0
@@ -43,22 +43,22 @@ function dirtylarry.button(self, node, input_id, input, cb)
 end
 
 
-function dirtylarry.checkbox(self, node, input_id, input, value)
+function dirtylarry.checkbox(self, node, action_id, action, value)
 
 	local checked = value
 
 	local node_bg = gui.get_node(node .. "/larrycheckbox")
 	local node_label = gui.get_node(node .. "/larrylabel")	
 
-	local touch = input_id == dirtylarry.action_id_touch
-    local hit = gui.pick_node( node_bg, input.x, input.y )
+	local touch = action_id == dirtylarry.action_id_touch
+    local hit = gui.pick_node( node_bg, action.x, action.y )
     if (node_label) then
-    	hit = hit or gui.pick_node( node_label, input.x, input.y )
+    	hit = hit or gui.pick_node( node_label, action.x, action.y )
     end
     
 
     if (touch and hit) then
-        if (input.released) then
+        if (action.released) then
             checked = not checked
         end
     end
@@ -69,7 +69,7 @@ function dirtylarry.checkbox(self, node, input_id, input, value)
 	end
 	
 	local flipbook = "checkbox_" .. append_str .. "normal"
-    if (touch and hit and not input.released) then
+    if (touch and hit and not action.released) then
     	flipbook = "checkbox_" .. append_str .. "pressed"
     end
 	
@@ -77,19 +77,19 @@ function dirtylarry.checkbox(self, node, input_id, input, value)
 	return checked
 end
 
-function dirtylarry.radio(self, node, input_id, input, id, value)
+function dirtylarry.radio(self, node, action_id, action, id, value)
 	
 	local node_bg = gui.get_node(node .. "/larryradio")
 	local node_label = gui.get_node(node .. "/larrylabel")	
 
-	local touch = input_id == dirtylarry.action_id_touch
-    local hit = gui.pick_node( node_bg, input.x, input.y )
+	local touch = action_id == dirtylarry.action_id_touch
+    local hit = gui.pick_node( node_bg, action.x, action.y )
 	if (node_label) then
-		hit = hit or gui.pick_node( node_label, input.x, input.y )
+		hit = hit or gui.pick_node( node_label, action.x, action.y )
 	end
 
     if (touch and hit) then
-        if (input.released) then
+        if (action.released) then
             value = id
         end
     end
@@ -100,7 +100,7 @@ function dirtylarry.radio(self, node, input_id, input, id, value)
 	end
 
 	local flipbook = "radio_" .. append_str .. "normal"
-    if (touch and hit and not input.released) then
+    if (touch and hit and not action.released) then
     	flipbook = "radio_" .. append_str .. "pressed"
     end
 
@@ -108,7 +108,7 @@ function dirtylarry.radio(self, node, input_id, input, id, value)
 	return value
 end
 
-function dirtylarry.input(self, node, input_id, input, type, empty_text)
+function dirtylarry.input(self, node, action_id, action, type, empty_text)
 	
 	local node_bg = gui.get_node(node .. "/bg")
 	local node_inner = gui.get_node(node .. "/inner")
@@ -124,7 +124,7 @@ function dirtylarry.input(self, node, input_id, input, type, empty_text)
 	local text_output = dirtylarry.input_nodes[node].data
 	local text_marked = ""
 	local input_node = dirtylarry.input_nodes[node]
-	local touch = input_id == dirtylarry.action_id_touch
+	local touch = action_id == dirtylarry.action_id_touch
 	
 	-- set inner box (clipper) to inner size of input field
 	local s = gui.get_size(node_bg)
@@ -136,19 +136,19 @@ function dirtylarry.input(self, node, input_id, input, type, empty_text)
 	local active_node_bg      = nil
 	local active_node_content = nil
 	local active_node_cursor  = nil
-	if (self.active_node) then
-		active_node_bg = gui.get_node(self.active_node.id .. "/bg")
-		active_node_content = gui.get_node(self.active_node.id .. "/content")
-		active_node_cursor = gui.get_node(self.active_node.id .. "/cursor")
+	if (dirtylarry.active_node) then
+		active_node_bg = gui.get_node(dirtylarry.active_node.id .. "/bg")
+		active_node_content = gui.get_node(dirtylarry.active_node.id .. "/content")
+		active_node_cursor = gui.get_node(dirtylarry.active_node.id .. "/cursor")
 	end
 	
 	-- switch active input node
-	if (input_id == dirtylarry.action_id_touch and input.released and
-		gui.pick_node(node_bg, input.x, input.y)) then
+	if (action_id == dirtylarry.action_id_touch and action.released and
+		gui.pick_node(node_bg, action.x, action.y)) then
 		
 			-- kill previous active
-			if (self.active_node) then
-				self.active_input_marked = ""
+			if (dirtylarry.active_node) then
+				dirtylarry.active_input_marked = ""
 				gui.cancel_animation(active_node_bg, "color")
 				gui.animate(active_node_bg, "color", dirtylarry.colors.base, gui.EASING_OUTCUBIC, 0.2)
 				gui.cancel_animation(active_node_cursor, "color")
@@ -158,7 +158,7 @@ function dirtylarry.input(self, node, input_id, input, type, empty_text)
 			end
 			
 			-- change to new entry
-			self.active_node = input_node
+			dirtylarry.active_node = input_node
 			gui.animate(node_bg, "color", dirtylarry.colors.active, gui.EASING_OUTCUBIC, 0.2)
 			gui.animate(node_cursor, "size", vmath.vector3(4, 32, 0), gui.EASING_OUTCUBIC, 0.2)
 			
@@ -167,40 +167,40 @@ function dirtylarry.input(self, node, input_id, input, type, empty_text)
 	end
 	
 	-- handle new input if current input node is active
-	if (self.active_node == input_node) then
+	if (dirtylarry.active_node == input_node) then
 	
 		-- new raw text input
-		if (input_id == dirtylarry.action_id_text) then
-			self.active_node.data = self.active_node.data .. input.text
-			self.active_input_marked = ""
+		if (action_id == dirtylarry.action_id_text) then
+			dirtylarry.active_node.data = dirtylarry.active_node.data .. action.text
+			dirtylarry.active_input_marked = ""
 		
 		-- new marked text input (uncommitted text)	
-		elseif (input_id == dirtylarry.action_id_marked_text) then
-			self.active_input_marked = input.text
+		elseif (action_id == dirtylarry.action_id_marked_text) then
+			dirtylarry.active_input_marked = action.text
 		
 		-- input deletion
-		elseif (input_id == dirtylarry.action_id_backspace and input.pressed) then
+		elseif (action_id == dirtylarry.action_id_backspace and action.pressed) then
 			local last_s = 0
-			for uchar in string.gfind(self.active_node.data, dirtylarry.utf8_gfind) do
+			for uchar in string.gfind(dirtylarry.active_node.data, dirtylarry.utf8_gfind) do
 	          last_s = string.len(uchar)
 	        end
 		
-			self.active_node.data = string.sub(self.active_node.data, 1, string.len(self.active_node.data) - last_s)
+			dirtylarry.active_node.data = string.sub(dirtylarry.active_node.data, 1, string.len(dirtylarry.active_node.data) - last_s)
 		end
 		
 		-- set text color
-		gui.set_color(node_content, self.colors.enabled)
+		gui.set_color(node_content, dirtylarry.colors.enabled)
 		
 		-- if current input is active, include marked text in output
-		text_output = self.active_node.data .. self.active_input_marked
+		text_output = dirtylarry.active_node.data .. dirtylarry.active_input_marked
 		
 		-- get text metrics for both raw input data and marked text
-		local m_t = gui.get_text_metrics(gui.get_font(node_content), self.active_node.data, 0, false, 0, 0)
-		local m_m = gui.get_text_metrics(gui.get_font(node_content), self.active_input_marked, 0, false, 0, 0)
+		local m_t = gui.get_text_metrics(gui.get_font(node_content), dirtylarry.active_node.data, 0, false, 0, 0)
+		local m_m = gui.get_text_metrics(gui.get_font(node_content), dirtylarry.active_input_marked, 0, false, 0, 0)
 		
 		-- set cursor (and marked text bg)
 		gui.set_position(node_cursor, vmath.vector3(4 + m_t.width, 0, 0))
-		if (self.active_input_marked and #self.active_input_marked) then
+		if (dirtylarry.active_input_marked and #dirtylarry.active_input_marked) then
 			gui.animate(node_cursor, "size", vmath.vector3(4 + m_m.width, 32, 0), gui.EASING_OUTCUBIC, 0.2)
 		else
 			gui.animate(node_cursor, "size", vmath.vector3(4, 32, 0), gui.EASING_OUTCUBIC, 0.2)
@@ -221,7 +221,7 @@ function dirtylarry.input(self, node, input_id, input, type, empty_text)
 	
 	-- show grayed out label/text if input is empty
 	if (empty_text and string.len(text_output) == 0) then
-		gui.set_color(node_content, self.colors.disabled)
+		gui.set_color(node_content, dirtylarry.colors.disabled)
 		gui.set_text(node_content, empty_text)
 	end
 	
