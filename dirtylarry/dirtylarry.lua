@@ -17,10 +17,24 @@ dirtylarry.colors = {
 }
 dirtylarry.utf8_gfind = "([%z\1-\127\194-\244][\128-\191]*)"
 
+
+function dirtylarry.is_enabled(self, node)
+	local parent = gui.get_parent(node)
+	if parent then
+		return dirtylarry.is_enabled(self, parent)
+	end
+	return gui.is_enabled(node)
+end
+
+
 function dirtylarry.button(self, node, action_id, action, cb)
 
 	local node_bg = gui.get_node(node .. "/larrybutton")
 	local node_label = gui.get_node(node .. "/larrylabel")
+	
+	if not dirtylarry.is_enabled(self, node_bg) then
+		return
+	end
 
     local hit = gui.pick_node( node_bg, action.x, action.y )
 	local touch = action_id == dirtylarry.action_id_touch
@@ -49,6 +63,10 @@ function dirtylarry.checkbox(self, node, action_id, action, value)
 
 	local node_bg = gui.get_node(node .. "/larrycheckbox")
 	local node_label = gui.get_node(node .. "/larrylabel")	
+
+	if not dirtylarry.is_enabled(self, node_bg) then
+		return
+	end
 
 	local touch = action_id == dirtylarry.action_id_touch
     local hit = gui.pick_node( node_bg, action.x, action.y )
@@ -82,6 +100,10 @@ function dirtylarry.radio(self, node, action_id, action, id, value)
 	local node_bg = gui.get_node(node .. "/larryradio")
 	local node_label = gui.get_node(node .. "/larrylabel")	
 
+	if not dirtylarry.is_enabled(self, node_bg) then
+		return
+	end
+
 	local touch = action_id == dirtylarry.action_id_touch
     local hit = gui.pick_node( node_bg, action.x, action.y )
 	if (node_label) then
@@ -114,6 +136,10 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
 	local node_inner = gui.get_node(node .. "/inner")
 	local node_content = gui.get_node(node .. "/content")
 	local node_cursor = gui.get_node(node .. "/cursor")
+
+	if not dirtylarry.is_enabled(self, node_bg) then
+		return
+	end
 	
 	-- create entry in input_nodes table on first call
 	if (not dirtylarry.input_nodes[node]) then
