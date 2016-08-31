@@ -27,6 +27,27 @@ function dirtylarry.is_enabled(self, node)
 end
 
 
+local function hit_test(self, node, action_id, action)
+	if not dirtylarry.is_enabled(self, node) then
+		return false
+	end
+	
+	local hit = gui.pick_node( node, action.x, action.y )
+	local touch = action_id == dirtylarry.action_id_touch
+	return touch and hit
+end
+
+
+function dirtylarry.hit(self, node, action_id, action, cb)
+	node = type(node) == "string" and gui.get_node(node) or node
+	local hit = hit_test(self, node, action_id, action)
+	if hit and action.released then
+		cb()
+	end
+	return hit
+end
+
+
 function dirtylarry.button(self, node, action_id, action, cb)
 
 	local node_bg = gui.get_node(node .. "/larrybutton")
