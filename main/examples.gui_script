@@ -31,4 +31,15 @@ function on_input(self, action_id, action)
     self.radio_value = dirtylarry:radio("radio_a", action_id, action, "a", self.radio_value)
     self.radio_value = dirtylarry:radio("radio_b", action_id, action, "b", self.radio_value)
     self.radio_value = dirtylarry:radio("radio_c", action_id, action, "c", self.radio_value)
+    
+    dirtylarry:button("button_toggle_larry", action_id, action, function ()
+    	local enabled = not gui.is_enabled(gui.get_node("larry_root"))
+    	gui.set_enabled(gui.get_node("larry_root"), enabled)
+    	gui.set_text(gui.get_node("button_toggle_larry/larrylabel"), enabled and "Hide Larry" or "Show Larry")
+    end)
+    
+    dirtylarry:button("button_larry", action_id, action, function ()
+    	print("I'm Dirty Larry")
+    end)
+    
 end
