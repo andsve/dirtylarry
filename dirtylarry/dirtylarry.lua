@@ -65,7 +65,7 @@ function dirtylarry.checkbox(self, node, action_id, action, value)
 	local node_label = gui.get_node(node .. "/larrylabel")	
 
 	if not dirtylarry.is_enabled(self, node_bg) then
-		return
+		return checked
 	end
 
 	local touch = action_id == dirtylarry.action_id_touch
@@ -101,7 +101,7 @@ function dirtylarry.radio(self, node, action_id, action, id, value)
 	local node_label = gui.get_node(node .. "/larrylabel")	
 
 	if not dirtylarry.is_enabled(self, node_bg) then
-		return
+		return value
 	end
 
 	local touch = action_id == dirtylarry.action_id_touch
@@ -136,14 +136,14 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
 	local node_inner = gui.get_node(node .. "/inner")
 	local node_content = gui.get_node(node .. "/content")
 	local node_cursor = gui.get_node(node .. "/cursor")
-
-	if not dirtylarry.is_enabled(self, node_bg) then
-		return
-	end
 	
 	-- create entry in input_nodes table on first call
 	if (not dirtylarry.input_nodes[node]) then
 		dirtylarry.input_nodes[node] = { id = node, data = gui.get_text(node_content) }
+	end
+
+	if not dirtylarry.is_enabled(self, node_bg) then
+		return dirtylarry.input_nodes[node].data
 	end
 	
 	-- input/output states
