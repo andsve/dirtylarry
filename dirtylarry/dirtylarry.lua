@@ -27,29 +27,43 @@ function dirtylarry.is_enabled(self, node)
 end
 
 
+local function hit_test(self, node, action_id, action)
+	if not dirtylarry.is_enabled(self, node) then
+		return false
+	end
+	
+	local hit = gui.pick_node( node, action.x, action.y )
+	local touch = action_id == dirtylarry.action_id_touch
+	return touch and hit
+end
+
+
+function dirtylarry.hit(self, node, action_id, action, cb)
+	node = type(node) == "string" and gui.get_node(node) or node
+	local hit = hit_test(self, node, action_id, action)
+	if hit and action.released then
+		cb()
+	end
+	return hit
+end
+
+
 function dirtylarry.button(self, node, action_id, action, cb)
 
 	local node_bg = gui.get_node(node .. "/larrybutton")
 	local node_label = gui.get_node(node .. "/larrylabel")
-	
-	if not dirtylarry.is_enabled(self, node_bg) then
-		return
-	end
 
-    local hit = gui.pick_node( node_bg, action.x, action.y )
-	local touch = action_id == dirtylarry.action_id_touch
-    
     local label_p = vmath.vector3(0.0)
     local flipbook = "button_normal"
-
-    if (touch and hit) then
-        if (action.released) then
+	local hit = hit_test(self, node_bg, action_id, action)
+	if hit then
+        if action.released then
             cb()
         else
         	label_p.y = -2.0
     		flipbook = "button_pressed"
         end
-    end
+	end
 
     gui.play_flipbook(node_bg, flipbook)
     gui.set_position(node_label, label_p)
@@ -64,33 +78,12 @@ function dirtylarry.checkbox(self, node, action_id, action, value)
 	local node_bg = gui.get_node(node .. "/larrycheckbox")
 	local node_label = gui.get_node(node .. "/larrylabel")	
 
-	if not dirtylarry.is_enabled(self, node_bg) then
-		return checked
-	end
-
-	local touch = action_id == dirtylarry.action_id_touch
-    local hit = gui.pick_node( node_bg, action.x, action.y )
-    if (node_label) then
-    	hit = hit or gui.pick_node( node_label, action.x, action.y )
+	local hit = hit_test(self, node_bg, action_id, action) or hit_test(self, node_label, action_id, action)
+    if hit and action.released then
+        checked = not checked
     end
     
-
-    if (touch and hit) then
-        if (action.released) then
-            checked = not checked
-        end
-    end
-    
-    local append_str = ""
-	if (checked) then
-		append_str = "checked_"
-	end
-	
-	local flipbook = "checkbox_" .. append_str .. "normal"
-    if (touch and hit and not action.released) then
-    	flipbook = "checkbox_" .. append_str .. "pressed"
-    end
-	
+	local flipbook = "checkbox_" .. (checked and "checked_" or "") .. (hit and not action.released and "pressed" or "normal")
 	gui.play_flipbook(node_bg, flipbook)
 	return checked
 end
@@ -100,32 +93,12 @@ function dirtylarry.radio(self, node, action_id, action, id, value)
 	local node_bg = gui.get_node(node .. "/larryradio")
 	local node_label = gui.get_node(node .. "/larrylabel")	
 
-	if not dirtylarry.is_enabled(self, node_bg) then
-		return value
-	end
-
-	local touch = action_id == dirtylarry.action_id_touch
-    local hit = gui.pick_node( node_bg, action.x, action.y )
-	if (node_label) then
-		hit = hit or gui.pick_node( node_label, action.x, action.y )
-	end
-
-    if (touch and hit) then
-        if (action.released) then
-            value = id
-        end
-    end
-    
-    local append_str = ""
-	if (value == id) then
-		append_str = "checked_"
-	end
-
-	local flipbook = "radio_" .. append_str .. "normal"
-    if (touch and hit and not action.released) then
-    	flipbook = "radio_" .. append_str .. "pressed"
+    local hit = hit_test(self, node_bg, action_id, action) or hit_test(self, node_label, action_id, action)
+    if hit and action.released then
+        value = id
     end
 
+	local flipbook = "radio_" .. (value == id and "checked_" or "") .. (hit and not action.released and "pressed" or "normal")
 	gui.play_flipbook(node_bg, flipbook)
 	return value
 end
