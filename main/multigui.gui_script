@@ -1,0 +1,18 @@
+local dirtylarry = require "dirtylarry/dirtylarry"
+
+function init(self)
+    msg.post(".", "acquire_input_focus")
+end
+
+function on_input(self, action_id, action)
+    self.input_default  = dirtylarry:input("input_default", action_id, action, gui.KEYBOARD_TYPE_DEFAULT, "Default text")
+
+    dirtylarry:button("button", action_id, action, function ()
+    	print("I'm Larry", msg.url())
+    end)
+end
+
+function on_reload(self)
+    -- Add input-handling code here
+    -- Remove this function if not needed
+end

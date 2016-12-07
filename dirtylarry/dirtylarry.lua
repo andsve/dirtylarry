@@ -116,12 +116,26 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
 
     -- create entry in input_nodes table on first call
     if (not dirtylarry.input_nodes[key]) then
-        dirtylarry.input_nodes[key] = { id = node, data = gui.get_text(node_content) }
+        dirtylarry.input_nodes[key] = { id = node, data = gui.get_text(node_content), active = false }
     end
 
     local input_node = dirtylarry.input_nodes[key]
     if not dirtylarry.is_enabled(self, node_bg) then
         return input_node.data
+    end
+
+    -- if we don't have an active node or the active node is other than the current node and
+    -- the current node was flagged as active then we need to deactivate it
+    -- note that we need to deactivate the previously active input node in the correct gui_script
+    -- otherwise we will get the "node used in the wrong scene" error
+    if (not dirtylarry.active_node or dirtylarry.active_node ~= input_node) and input_node.active then
+        local active_node_bg = gui.get_node(input_node.id .. "/bg")
+        local active_node_cursor = gui.get_node(input_node.id .. "/cursor")
+        input_node.active = false
+        gui.cancel_animation(active_node_bg, "color")
+        gui.animate(active_node_bg, "color", dirtylarry.colors.base, gui.EASING_OUTCUBIC, 0.2)
+        gui.cancel_animation(active_node_cursor, "color")
+        gui.animate(active_node_cursor, "size", vmath.vector3(0, 48, 0), gui.EASING_OUTCUBIC, 0.1)
     end
 
     -- input/output states
@@ -135,33 +149,13 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
     s.y = s.y - 4
     gui.set_size(node_inner, s)
 
-    -- keep track of current active input field
-    local active_node_bg      = nil
-    local active_node_content = nil
-    local active_node_cursor  = nil
-    if (dirtylarry.active_node) then
-        active_node_bg = gui.get_node(dirtylarry.active_node.id .. "/bg")
-        active_node_content = gui.get_node(dirtylarry.active_node.id .. "/content")
-        active_node_cursor = gui.get_node(dirtylarry.active_node.id .. "/cursor")
-    end
-
     -- switch active input node
-    if (action_id == dirtylarry.action_id_touch and action.released and
-        gui.pick_node(node_bg, action.x, action.y)) then
-
-            -- kill previous active
-            if (dirtylarry.active_node) then
-                dirtylarry.active_input_marked = ""
-                gui.cancel_animation(active_node_bg, "color")
-                gui.animate(active_node_bg, "color", dirtylarry.colors.base, gui.EASING_OUTCUBIC, 0.2)
-                gui.cancel_animation(active_node_cursor, "color")
-                gui.animate(active_node_cursor, "size", vmath.vector3(0, 48, 0), gui.EASING_OUTCUBIC, 0.1)
-
-                gui.reset_keyboard()
-            end
-
+    if hit_test(self, node_bg, action_id, action) then
             -- change to new entry
+            gui.reset_keyboard()
+            dirtylarry.active_input_marked = ""
             dirtylarry.active_node = input_node
+            dirtylarry.active_node.active = true
             gui.animate(node_bg, "color", dirtylarry.colors.active, gui.EASING_OUTCUBIC, 0.2)
             gui.animate(node_cursor, "size", vmath.vector3(4, 32, 0), gui.EASING_OUTCUBIC, 0.2)
 
