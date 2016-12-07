@@ -182,7 +182,7 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
             dirtylarry.active_input_marked = action.text
 
         -- input deletion
-        elseif (action_id == dirtylarry.action_id_backspace and action.pressed) then
+        elseif (action_id == dirtylarry.action_id_backspace and (action.pressed or action.repeated)) then
             local last_s = 0
             for uchar in string.gfind(dirtylarry.active_node.data, dirtylarry.utf8_gfind) do
               last_s = string.len(uchar)
