@@ -110,19 +110,23 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
     local node_content = gui.get_node(node .. "/content")
     local node_cursor = gui.get_node(node .. "/cursor")
 
+    -- create a key that is unique to the gui scene
+    local url = msg.url()
+    local key = tostring(url.socket) .. hash_to_hex(url.path) .. hash_to_hex(url.fragment or hash("")) .. node
+
     -- create entry in input_nodes table on first call
-    if (not dirtylarry.input_nodes[node]) then
-        dirtylarry.input_nodes[node] = { id = node, data = gui.get_text(node_content) }
+    if (not dirtylarry.input_nodes[key]) then
+        dirtylarry.input_nodes[key] = { id = node, data = gui.get_text(node_content) }
     end
 
+    local input_node = dirtylarry.input_nodes[key]
     if not dirtylarry.is_enabled(self, node_bg) then
-        return dirtylarry.input_nodes[node].data
+        return input_node.data
     end
 
     -- input/output states
-    local text_output = dirtylarry.input_nodes[node].data
+    local text_output = input_node.data
     local text_marked = ""
-    local input_node = dirtylarry.input_nodes[node]
     local touch = action_id == dirtylarry.action_id_touch
 
     -- set inner box (clipper) to inner size of input field
@@ -224,7 +228,7 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
         gui.set_text(node_content, empty_text)
     end
 
-    return dirtylarry.input_nodes[node].data
+    return input_node.data
 end
 
 return dirtylarry
