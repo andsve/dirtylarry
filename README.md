@@ -37,7 +37,7 @@ A quick and dirty GUI library for [Defold](https://www.defold.com/).
    * *Text Triggers*: Input: `text`, Action: `text`
    * *Text Triggers*: Input: `marked-text`, Action: `marked_text`
    
-    For more usage examples take a look at [main/examples.gui_script](main/examples.gui_script) and [dirtylarry/dirtylarry.lua](dirtylarry/dirtylarry.lua) for configurational options.
+For more usage examples take a look at [main/examples.gui_script](main/examples.gui_script) and [dirtylarry/dirtylarry.lua](dirtylarry/dirtylarry.lua) for configurational options.
 
 ## Examples
 * Using the built in font:
