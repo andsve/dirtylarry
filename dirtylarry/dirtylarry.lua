@@ -1,5 +1,6 @@
 local dirtylarry = {}
 
+dirtylarry.action_id_click       = hash("click")
 dirtylarry.action_id_touch       = hash("touch")
 dirtylarry.action_id_text        = hash("text")
 dirtylarry.action_id_marked_text = hash("marked_text")
@@ -40,7 +41,7 @@ local function hit_test(self, node, action_id, action)
     end
 
     local hit = gui.pick_node( node, action.x, action.y )
-    local touch = action_id == dirtylarry.action_id_touch
+    local touch = (action_id == dirtylarry.action_id_touch or action_id == dirtylarry.action_id_click)
     return touch and hit
 end
 
