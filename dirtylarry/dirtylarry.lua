@@ -16,6 +16,7 @@ dirtylarry.colors = {
     mark = vmath.vector4(255/255,40/255,40/255,1)
 }
 dirtylarry.utf8_gfind = "([%z\1-\127\194-\244][\128-\191]*)"
+dirtylarry.slider_fmt = "%.3f"
 
 
 function dirtylarry.is_enabled(self, node)
@@ -317,6 +318,67 @@ function dirtylarry.scrollarea(self, node_str, action_id, action, scroll, cb)
     end
 
 	return scroll
+end
+
+local function clamp(v, min, max)
+    if v < min then
+        return min
+    elseif v > max then
+        return max
+    end
+    return v
+end
+
+function dirtylarry.slider(self, node_str, action_id, action, min_value, max_value, value)
+    local node_sa = gui.get_node(node_str .. "/larrysafearea")
+    local node_bg = gui.get_node(node_str .. "/larryslider")
+    local node_cursor = gui.get_node(node_str .. "/larrycursor")
+    local node_value = gui.get_node(node_str .. "/larryvalue")
+
+    local hit = hit_test(self, node_sa, action_id, action) or hit_test(self, node_value, action_id, action)
+
+    if action.released and action_id == dirtylarry.action_id_touch and dirtylarry.active_node == node_sa then
+        dirtylarry.active_node = nil
+    elseif hit and action.pressed and dirtylarry.active_node == nil then
+        dirtylarry.active_node = node_sa
+    end
+
+    local sliding = hit and not action.released
+
+    local sa_pos = gui.get_position(node_sa)
+    local bg_pos = gui.get_position(node_bg)
+    local bg_size = gui.get_size(node_bg)
+    local cursor_size = gui.get_size(node_cursor)
+
+    local slider_width = bg_size.x - cursor_size.x
+    local slider_start = sa_pos.x + bg_pos.x + cursor_size.x * 0.5
+
+    local unit_value = (value - min_value) / (max_value - min_value)
+    unit_value = clamp(unit_value, min_value, max_value)
+
+    if dirtylarry.active_node ~= node_sa then
+        local pos = gui.get_position(node_cursor)
+        pos.x = unit_value * (bg_size.x - cursor_size.x)
+        gui.set_position(node_cursor, pos)
+    elseif not action.released and dirtylarry.active_node == node_sa then
+        local pos = gui.get_position(node_cursor)
+        unit_value = (action.x - slider_start) / slider_width
+        unit_value = clamp(unit_value, 0.0, 1.0)
+
+        local pos = gui.get_position(node_cursor)
+        pos.x = unit_value * (bg_size.x - cursor_size.x)
+        gui.set_position(node_cursor, pos)
+    end
+
+    local slider_value = min_value * (1.0 - unit_value) + max_value * unit_value
+
+    gui.set_text(node_value, string.format(dirtylarry.slider_fmt, slider_value))
+
+    --local flipbook = "radio_" .. (sliding and "checked_" or "") .. (hit and not action.released and "pressed" or "normal")
+    local flipbook = "radio_checked_" .. (hit and not action.released and "pressed" or "normal")
+    gui.play_flipbook(node_cursor, flipbook)
+
+    return slider_value
 end
 
 return dirtylarry

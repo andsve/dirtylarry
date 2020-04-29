@@ -5,6 +5,7 @@ function init(self)
     self.checkbox_a_value = false
     self.checkbox_b_value = true
     self.radio_value = "a"
+    self.slider_value = 0.0
 end
 
 function on_input(self, action_id, action)
@@ -31,6 +32,8 @@ function on_input(self, action_id, action)
     self.radio_value = dirtylarry:radio("radio_a", action_id, action, "a", self.radio_value)
     self.radio_value = dirtylarry:radio("radio_b", action_id, action, "b", self.radio_value)
     self.radio_value = dirtylarry:radio("radio_c", action_id, action, "c", self.radio_value)
+
+    self.slider_value = dirtylarry:slider("slider", action_id, action, -1.0, 1.0, self.slider_value)
     
     dirtylarry:button("button_toggle_larry", action_id, action, function ()
     	local enabled = not gui.is_enabled(gui.get_node("larry_root"))
