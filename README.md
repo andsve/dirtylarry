@@ -30,13 +30,17 @@ A quick and dirty GUI library for [Defold](https://www.defold.com/).
     self.radio_value = dirtylarry:radio("node_a_id", action_id, action, "a", self.radio_value)
     self.radio_value = dirtylarry:radio("node_b_id", action_id, action, "b", self.radio_value)
     ```
+    * `dirtylarry/slider.gui`
+    ```Lua
+    self.slider_value = dirtylarry:slider("slider", action_id, action, -1.0, 1.0, self.slider_value)
+    ```
 
 5. In the `input/game.input_binding`, add the following triggers:
    * *Key Triggers*: Input: `key-backspace`, Action: `backspace`
    * *Mouse Triggers*: Input: `mouse-button-1`, Action: `touch`
    * *Text Triggers*: Input: `text`, Action: `text`
    * *Text Triggers*: Input: `marked-text`, Action: `marked_text`
-   
+
 For more usage examples take a look at [main/examples.gui_script](main/examples.gui_script) and [dirtylarry/dirtylarry.lua](dirtylarry/dirtylarry.lua) for configurational options.
 
 ## Examples
