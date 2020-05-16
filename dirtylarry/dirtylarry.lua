@@ -110,7 +110,7 @@ function dirtylarry.radio(self, node, action_id, action, id, value)
     return value
 end
 
-function dirtylarry.input(self, node, action_id, action, type, empty_text)
+function dirtylarry.input(self, node, action_id, action, type, empty_text, set_text)
 
     local node_bg = gui.get_node(node .. "/bg")
     local node_inner = gui.get_node(node .. "/inner")
@@ -127,6 +127,12 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
     end
 
     local input_node = dirtylarry.input_nodes[key]
+    
+    if set_text ~= nil then
+    	input_node.data = set_text
+    	gui.set_text(node_content,set_text)
+    end
+
     if not dirtylarry.is_enabled(self, node_bg) then
         return input_node.data
     end
