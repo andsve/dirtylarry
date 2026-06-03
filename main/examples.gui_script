@@ -63,7 +63,7 @@ function on_input(self, action_id, action)
     
     local node = gui.get_node("defold")
     dirtylarry:hit(node, action_id, action, function()
-    	gui.cancel_animation(node, "scale")
+		gui.cancel_animations(node, "scale")
 		gui.set_scale(node, vmath.vector3(1.2))
 		gui.animate(node, "scale", 1.0, gui.EASING_OUTELASTIC, 0.8)
     end)
