@@ -28,11 +28,11 @@ function dirtylarry.is_enabled(self, node)
 end
 
 local function safe_get_node(node)
-    if pcall(function() gui.get_node(node) end) then
-        return gui.get_node(node)
-    else
-        return nil
-    end
+	if pcall(function() gui.get_node(node) end) then
+		return gui.get_node(node)
+	else
+		return nil
+	end
 end
 
 local function hit_test(self, node, action_id, action)
@@ -161,16 +161,16 @@ function dirtylarry.input(self, node, action_id, action, type, empty_text)
 
     -- switch active input node
     if hit_test(self, node_bg, action_id, action) then
-        -- change to new entry
-        gui.reset_keyboard()
-        dirtylarry.active_input_marked = ""
-        dirtylarry.active_node = input_node
-        dirtylarry.active_node.active = true
-        gui.animate(node_bg, "color", dirtylarry.colors.active, gui.EASING_OUTCUBIC, 0.2)
-        gui.animate(node_cursor, "size", vmath.vector3(4, 32, 0), gui.EASING_OUTCUBIC, 0.2)
+            -- change to new entry
+            gui.reset_keyboard()
+            dirtylarry.active_input_marked = ""
+            dirtylarry.active_node = input_node
+            dirtylarry.active_node.active = true
+            gui.animate(node_bg, "color", dirtylarry.colors.active, gui.EASING_OUTCUBIC, 0.2)
+            gui.animate(node_cursor, "size", vmath.vector3(4, 32, 0), gui.EASING_OUTCUBIC, 0.2)
 
-        -- show keyboard for mobile devices
-        gui.show_keyboard(type, true)
+            -- show keyboard for mobile devices
+            gui.show_keyboard(type, true)
     end
 
     -- handle new input if current input node is active
@@ -243,84 +243,84 @@ function dirtylarry.scrollarea(self, node_str, action_id, action, scroll, cb)
     
     local scroll = scroll
     if not scroll then
-        -- assume initial call
-        local p = gui.get_position(node)
-        local s = gui.get_size(node)
-        scroll = {drag=false,started=false,dx=0,dy=0,ox=p.x,oy=p.y,ow=s.x,oh=s.y}
-
-        scroll.bar_x = safe_get_node(node_str .. "_barx")
-        scroll.bar_y = safe_get_node(node_str .. "_bary")
+    	-- assume initial call
+    	local p = gui.get_position(node)
+    	local s = gui.get_size(node)
+    	scroll = {drag=false,started=false,dx=0,dy=0,ox=p.x,oy=p.y,ow=s.x,oh=s.y}
+    	
+    	scroll.bar_x = safe_get_node(node_str .. "_barx")
+    	scroll.bar_y = safe_get_node(node_str .. "_bary")
     end
     
     local hit = false
-    if parent then
-        hit = hit_test(self, parent, action_id, action)
-    else
-        hit = hit_test(self, node, action_id, action)
-    end
+	if parent then
+		hit = hit_test(self, parent, action_id, action)
+	else
+		hit = hit_test(self, node, action_id, action)
+	end
     
     local consumed_input = false
-    if touch then
-
-        -- end scroll/drag
-        if scroll.drag and action.released then
-            scroll.drag = false
-            scroll.started = false
-            consumed_input = true
-
-        -- potentially start scroll/drag
-        elseif hit and action.pressed then
-            scroll.started = true
-
-        -- start scroll/drag
-        elseif scroll.started and hit and (action.dx ~= 0 or action.dy ~= 0) then
-            scroll.drag = true
-            scroll.started = false
-            consumed_input = true
-        end
-
-        if scroll.drag then
-            consumed_input = true
-
-            scroll.dx = scroll.dx - action.dx
-            scroll.dy = scroll.dy + action.dy
-
-            if parent then
-                local s = gui.get_size(parent)
-                local min_x = 0
-                local min_y = 0
-                local max_x = math.max(0, scroll.ow - s.x)
-                local max_y = math.max(0, scroll.oh - s.y)
-
-                if scroll.dx < min_x then scroll.dx = min_x end	
-                if scroll.dx > max_x then scroll.dx = max_x end
-                if scroll.dy < min_y then scroll.dy = min_y end
-                if scroll.dy > max_y then scroll.dy = max_y end
-
-                if scroll.bar_x and max_x > 0 then
-                    local delta_x = scroll.dx / max_x
-                    local bar_s = gui.get_size(scroll.bar_x)
-                    local p = vmath.vector3((s.x-bar_s.x) * delta_x, -s.y, 0)
-                    gui.set_position(scroll.bar_x, p)
-                end
-                if scroll.bar_y and max_y > 0 then
-                    local delta_y = scroll.dy / max_y
-                    local bar_s = gui.get_size(scroll.bar_y)
-                    local p = vmath.vector3(s.x, -(s.y-bar_s.y) * delta_y, 0)
-                    gui.set_position(scroll.bar_y, p)
-                end
-            end
-
-            gui.set_position(node, vmath.vector3(scroll.ox-scroll.dx, scroll.oy+scroll.dy, 0))
-
-        end
+	if touch then
+	    
+	    -- end scroll/drag
+    	if scroll.drag and action.released then
+    		scroll.drag = false
+    		scroll.started = false
+    		consumed_input = true
+    		
+    	-- potentially start scroll/drag
+    	elseif hit and action.pressed then
+    		scroll.started = true
+    		
+    	-- start scroll/drag
+    	elseif scroll.started and hit and (action.dx ~= 0 or action.dy ~= 0) then
+    		scroll.drag = true
+    		scroll.started = false
+    		consumed_input = true
+    	end
+    	
+    	if scroll.drag then
+	    	consumed_input = true
+	
+    		scroll.dx = scroll.dx - action.dx
+    		scroll.dy = scroll.dy + action.dy
+    		
+    		if parent then
+    			local s = gui.get_size(parent)
+	    		local min_x = 0
+	    		local min_y = 0
+    			local max_x = math.max(0, scroll.ow - s.x)
+    			local max_y = math.max(0, scroll.oh - s.y)
+    			
+    			if scroll.dx < min_x then scroll.dx = min_x end	
+	    		if scroll.dx > max_x then scroll.dx = max_x end
+	    		if scroll.dy < min_y then scroll.dy = min_y end
+	    		if scroll.dy > max_y then scroll.dy = max_y end
+	    		
+	    		if scroll.bar_x and max_x > 0 then
+	    			local delta_x = scroll.dx / max_x
+	    			local bar_s = gui.get_size(scroll.bar_x)
+	    			local p = vmath.vector3((s.x-bar_s.x) * delta_x, -s.y, 0)
+	    			gui.set_position(scroll.bar_x, p)
+	    		end
+	    		if scroll.bar_y and max_y > 0 then
+	    			local delta_y = scroll.dy / max_y
+	    			local bar_s = gui.get_size(scroll.bar_y)
+	    			local p = vmath.vector3(s.x, -(s.y-bar_s.y) * delta_y, 0)
+	    			gui.set_position(scroll.bar_y, p)
+	    		end
+    		end
+    		
+    		gui.set_position(node, vmath.vector3(scroll.ox-scroll.dx, scroll.oy+scroll.dy, 0))
+	    	
+    	end
+    end
+	    
+	if not consumed_input and ((touch and hit) or not touch) then
+    	cb(self, action_id, action)
     end
 
-    if not consumed_input and ((touch and hit) or not touch) then
-        cb(self, action_id, action)
-    end
-
-    return scroll
+	return scroll
 end
 
 local function clamp(v, min, max)
