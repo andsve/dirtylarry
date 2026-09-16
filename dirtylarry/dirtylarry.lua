@@ -36,6 +36,9 @@ local function safe_get_node(node)
 end
 
 local function hit_test(self, node, action_id, action)
+    if not action.x then
+        return false
+    end
     if not dirtylarry.is_enabled(self, node) then
         return false
     end
